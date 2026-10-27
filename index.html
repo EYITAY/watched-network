@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Watched Network</title>
+<meta name="author" content="Eyitayo Alimi">
+<meta name="copyright" content="© 2026 Eyitayo Alimi. All rights reserved.">
+<style>
+  :root{color-scheme:dark;background:#030913}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#030913;color:#dff8ff;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  canvas{display:block;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  body{-webkit-user-select:none;user-select:none}
+  #overlay{position:fixed;z-index:5;left:24px;top:20px;pointer-events:none;text-shadow:0 0 14px #00cfff66}
+  h1{font-size:clamp(18px,2.5vw,32px);letter-spacing:.12em;margin:0 0 8px;font-weight:500;color:#eafaff}
+  #overlay p{font-size:12px;line-height:1.6;max-width:320px;color:#a9d3e0;margin:0 0 6px}
+  #overlay p.tag{color:#eafaff;font-size:13px}
+  #hint{position:fixed;z-index:5;right:24px;top:22px;text-align:right;font-size:10px;line-height:1.7;color:#85bbcd;pointer-events:none}
+  #meta{position:fixed;z-index:5;left:24px;right:24px;bottom:max(12px,env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;align-items:flex-end;gap:40px;pointer-events:none}
+  #author{pointer-events:auto;display:flex;flex-direction:column;gap:1px;min-width:0;max-width:min(380px,calc(100vw - 200px));background:rgba(3,9,19,.78);border:1px solid rgba(57,227,255,.38);border-radius:8px;padding:8px 12px;backdrop-filter:blur(6px);box-shadow:0 0 24px rgba(0,207,255,.12)}
+  #author .k{font-size:8px;letter-spacing:.16em;color:#39e3ff}
+  #author strong{font-size:14px;font-weight:600;color:#eafaff;letter-spacing:.02em}
+  #author span{font-size:10px;color:#a9d3e0;line-height:1.35}
+  #author .cp{margin-top:2px;font-size:9px;color:#8fb4c4}
+  #author a{font-size:10px;color:#39e3ff;text-decoration:underline;text-underline-offset:3px;word-break:break-all;line-height:1.45;-webkit-user-select:text;user-select:text}
+  #author a:focus-visible{outline:2px solid #39e3ff;outline-offset:2px}
+  #qrbox{pointer-events:auto;display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(3,9,19,.78);border:1px solid rgba(57,227,255,.38);border-radius:8px;padding:6px;backdrop-filter:blur(6px);box-shadow:0 0 24px rgba(0,207,255,.12);flex:none}
+  #qr{background:#e8f4ff;padding:7px;border-radius:4px;line-height:0}
+  #qr svg{display:block;width:80px;height:80px}
+  #qrbox span{font-size:7.5px;letter-spacing:.12em;color:#a9d3e0;text-align:center}
+  @media(max-width:650px){#overlay{left:12px;top:12px;right:12px}#overlay p{max-width:none;font-size:11px}#overlay p:last-child{display:none}#hint{display:none}#meta{left:12px;right:12px}#author{max-width:calc(100vw - 150px);padding:7px 10px}#author strong{font-size:13px}#author span,#author a{font-size:9px}#qr svg{width:72px;height:72px}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div id="overlay">
+  <h1>THE WATCHED NETWORK</h1>
+  <p class="tag">AI Agent Collusion + Threat Modelling.</p>
+  <p>3 AI Agents|Cost bidding|One observing eye.<br>Conceptual art.</p>
+</div>
+<div id="hint">MOVE POINTER · DISTURB THE FIELD<br>CLICK · RESEED THE SYSTEM</div>
+<div id="meta" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+  <div id="author">
+    <span class="k">AUTHOR</span>
+    <strong><a href="https://alimieyitayo.com" target="_blank" rel="noopener" style="font-size:inherit;font-weight:inherit;color:inherit;text-decoration:underline;text-underline-offset:3px">Eyitayo Alimi</a></strong>
+    <span>Independent Researcher · with Apart Research</span>
+    <span>Monitored Collusion in LLM Auctions (2026)</span>
+    <a href="https://github.com/EYITAY/Monitored-Collusion-in-LLM-Auctions" target="_blank" rel="noopener">github.com/EYITAY/Monitored-Collusion-in-LLM-Auctions</a>
+    <span class="cp">© 2026 Eyitayo Alimi. All rights reserved.</span>
+  </div>
+  <div id="qrbox"><div id="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" width="112" height="112" shape-rendering="crispEdges" role="img" aria-label="QR code linking to the GitHub repository"><rect width="37" height="37" fill="#e8f4ff"/><path d="M2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM5 2h1v1h-1zM6 2h1v1h-1zM7 2h1v1h-1zM8 2h1v1h-1zM10 2h1v1h-1zM13 2h1v1h-1zM14 2h1v1h-1zM16 2h1v1h-1zM20 2h1v1h-1zM24 2h1v1h-1zM28 2h1v1h-1zM29 2h1v1h-1zM30 2h1v1h-1zM31 2h1v1h-1zM32 2h1v1h-1zM33 2h1v1h-1zM34 2h1v1h-1zM2 3h1v1h-1zM8 3h1v1h-1zM10 3h1v1h-1zM11 3h1v1h-1zM12 3h1v1h-1zM14 3h1v1h-1zM15 3h1v1h-1zM16 3h1v1h-1zM18 3h1v1h-1zM19 3h1v1h-1zM20 3h1v1h-1zM22 3h1v1h-1zM23 3h1v1h-1zM24 3h1v1h-1zM26 3h1v1h-1zM28 3h1v1h-1zM34 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM5 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM12 4h1v1h-1zM13 4h1v1h-1zM14 4h1v1h-1zM15 4h1v1h-1zM16 4h1v1h-1zM19 4h1v1h-1zM21 4h1v1h-1zM22 4h1v1h-1zM23 4h1v1h-1zM25 4h1v1h-1zM28 4h1v1h-1zM30 4h1v1h-1zM31 4h1v1h-1zM32 4h1v1h-1zM34 4h1v1h-1zM2 5h1v1h-1zM4 5h1v1h-1zM5 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM12 5h1v1h-1zM15 5h1v1h-1zM16 5h1v1h-1zM17 5h1v1h-1zM19 5h1v1h-1zM20 5h1v1h-1zM21 5h1v1h-1zM23 5h1v1h-1zM24 5h1v1h-1zM25 5h1v1h-1zM28 5h1v1h-1zM30 5h1v1h-1zM31 5h1v1h-1zM32 5h1v1h-1zM34 5h1v1h-1zM2 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM11 6h1v1h-1zM12 6h1v1h-1zM13 6h1v1h-1zM15 6h1v1h-1zM20 6h1v1h-1zM24 6h1v1h-1zM25 6h1v1h-1zM28 6h1v1h-1zM30 6h1v1h-1zM31 6h1v1h-1zM32 6h1v1h-1zM34 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM10 7h1v1h-1zM13 7h1v1h-1zM15 7h1v1h-1zM18 7h1v1h-1zM19 7h1v1h-1zM20 7h1v1h-1zM22 7h1v1h-1zM23 7h1v1h-1zM24 7h1v1h-1zM26 7h1v1h-1zM28 7h1v1h-1zM34 7h1v1h-1zM2 8h1v1h-1zM3 8h1v1h-1zM4 8h1v1h-1zM5 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM8 8h1v1h-1zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h1v1h-1zM26 8h1v1h-1zM28 8h1v1h-1zM29 8h1v1h-1zM30 8h1v1h-1zM31 8h1v1h-1zM32 8h1v1h-1zM33 8h1v1h-1zM34 8h1v1h-1zM10 9h1v1h-1zM12 9h1v1h-1zM13 9h1v1h-1zM14 9h1v1h-1zM16 9h1v1h-1zM21 9h1v1h-1zM25 9h1v1h-1zM26 9h1v1h-1zM2 10h1v1h-1zM3 10h1v1h-1zM4 10h1v1h-1zM7 10h1v1h-1zM8 10h1v1h-1zM10 10h1v1h-1zM11 10h1v1h-1zM12 10h1v1h-1zM15 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM21 10h1v1h-1zM26 10h1v1h-1zM27 10h1v1h-1zM28 10h1v1h-1zM29 10h1v1h-1zM30 10h1v1h-1zM33 10h1v1h-1zM34 10h1v1h-1zM2 11h1v1h-1zM7 11h1v1h-1zM9 11h1v1h-1zM11 11h1v1h-1zM12 11h1v1h-1zM15 11h1v1h-1zM17 11h1v1h-1zM18 11h1v1h-1zM19 11h1v1h-1zM21 11h1v1h-1zM22 11h1v1h-1zM23 11h1v1h-1zM25 11h1v1h-1zM28 11h1v1h-1zM29 11h1v1h-1zM33 11h1v1h-1zM34 11h1v1h-1zM2 12h1v1h-1zM3 12h1v1h-1zM5 12h1v1h-1zM6 12h1v1h-1zM8 12h1v1h-1zM10 12h1v1h-1zM13 12h1v1h-1zM17 12h1v1h-1zM18 12h1v1h-1zM19 12h1v1h-1zM21 12h1v1h-1zM23 12h1v1h-1zM24 12h1v1h-1zM25 12h1v1h-1zM27 12h1v1h-1zM28 12h1v1h-1zM29 12h1v1h-1zM34 12h1v1h-1zM2 13h1v1h-1zM6 13h1v1h-1zM9 13h1v1h-1zM11 13h1v1h-1zM15 13h1v1h-1zM18 13h1v1h-1zM20 13h1v1h-1zM22 13h1v1h-1zM24 13h1v1h-1zM27 13h1v1h-1zM28 13h1v1h-1zM29 13h1v1h-1zM30 13h1v1h-1zM4 14h1v1h-1zM7 14h1v1h-1zM8 14h1v1h-1zM10 14h1v1h-1zM11 14h1v1h-1zM13 14h1v1h-1zM14 14h1v1h-1zM15 14h1v1h-1zM17 14h1v1h-1zM21 14h1v1h-1zM28 14h1v1h-1zM29 14h1v1h-1zM33 14h1v1h-1zM34 14h1v1h-1zM3 15h1v1h-1zM5 15h1v1h-1zM7 15h1v1h-1zM14 15h1v1h-1zM17 15h1v1h-1zM18 15h1v1h-1zM19 15h1v1h-1zM21 15h1v1h-1zM22 15h1v1h-1zM24 15h1v1h-1zM26 15h1v1h-1zM28 15h1v1h-1zM32 15h1v1h-1zM33 15h1v1h-1zM34 15h1v1h-1zM3 16h1v1h-1zM4 16h1v1h-1zM6 16h1v1h-1zM7 16h1v1h-1zM8 16h1v1h-1zM9 16h1v1h-1zM10 16h1v1h-1zM12 16h1v1h-1zM14 16h1v1h-1zM15 16h1v1h-1zM16 16h1v1h-1zM17 16h1v1h-1zM19 16h1v1h-1zM20 16h1v1h-1zM21 16h1v1h-1zM22 16h1v1h-1zM23 16h1v1h-1zM25 16h1v1h-1zM29 16h1v1h-1zM31 16h1v1h-1zM34 16h1v1h-1zM2 17h1v1h-1zM3 17h1v1h-1zM5 17h1v1h-1zM12 17h1v1h-1zM13 17h1v1h-1zM14 17h1v1h-1zM16 17h1v1h-1zM17 17h1v1h-1zM20 17h1v1h-1zM22 17h1v1h-1zM27 17h1v1h-1zM28 17h1v1h-1zM2 18h1v1h-1zM5 18h1v1h-1zM7 18h1v1h-1zM8 18h1v1h-1zM9 18h1v1h-1zM15 18h1v1h-1zM16 18h1v1h-1zM17 18h1v1h-1zM18 18h1v1h-1zM22 18h1v1h-1zM25 18h1v1h-1zM26 18h1v1h-1zM28 18h1v1h-1zM29 18h1v1h-1zM31 18h1v1h-1zM34 18h1v1h-1zM2 19h1v1h-1zM4 19h1v1h-1zM5 19h1v1h-1zM7 19h1v1h-1zM11 19h1v1h-1zM12 19h1v1h-1zM15 19h1v1h-1zM16 19h1v1h-1zM17 19h1v1h-1zM18 19h1v1h-1zM19 19h1v1h-1zM21 19h1v1h-1zM22 19h1v1h-1zM23 19h1v1h-1zM26 19h1v1h-1zM28 19h1v1h-1zM29 19h1v1h-1zM31 19h1v1h-1zM32 19h1v1h-1zM33 19h1v1h-1zM34 19h1v1h-1zM4 20h1v1h-1zM8 20h1v1h-1zM10 20h1v1h-1zM12 20h1v1h-1zM13 20h1v1h-1zM17 20h1v1h-1zM21 20h1v1h-1zM22 20h1v1h-1zM25 20h1v1h-1zM26 20h1v1h-1zM30 20h1v1h-1zM34 20h1v1h-1zM2 21h1v1h-1zM6 21h1v1h-1zM9 21h1v1h-1zM11 21h1v1h-1zM15 21h1v1h-1zM18 21h1v1h-1zM22 21h1v1h-1zM24 21h1v1h-1zM26 21h1v1h-1zM27 21h1v1h-1zM29 21h1v1h-1zM2 22h1v1h-1zM5 22h1v1h-1zM8 22h1v1h-1zM9 22h1v1h-1zM11 22h1v1h-1zM13 22h1v1h-1zM14 22h1v1h-1zM15 22h1v1h-1zM17 22h1v1h-1zM20 22h1v1h-1zM22 22h1v1h-1zM25 22h1v1h-1zM27 22h1v1h-1zM28 22h1v1h-1zM31 22h1v1h-1zM34 22h1v1h-1zM3 23h1v1h-1zM4 23h1v1h-1zM5 23h1v1h-1zM6 23h1v1h-1zM7 23h1v1h-1zM9 23h1v1h-1zM12 23h1v1h-1zM14 23h1v1h-1zM17 23h1v1h-1zM18 23h1v1h-1zM19 23h1v1h-1zM21 23h1v1h-1zM22 23h1v1h-1zM24 23h1v1h-1zM26 23h1v1h-1zM28 23h1v1h-1zM29 23h1v1h-1zM31 23h1v1h-1zM32 23h1v1h-1zM33 23h1v1h-1zM34 23h1v1h-1zM2 24h1v1h-1zM3 24h1v1h-1zM4 24h1v1h-1zM6 24h1v1h-1zM8 24h1v1h-1zM9 24h1v1h-1zM10 24h1v1h-1zM11 24h1v1h-1zM14 24h1v1h-1zM15 24h1v1h-1zM16 24h1v1h-1zM17 24h1v1h-1zM19 24h1v1h-1zM21 24h1v1h-1zM24 24h1v1h-1zM25 24h1v1h-1zM29 24h1v1h-1zM30 24h1v1h-1zM34 24h1v1h-1zM7 25h1v1h-1zM11 25h1v1h-1zM13 25h1v1h-1zM14 25h1v1h-1zM16 25h1v1h-1zM20 25h1v1h-1zM21 25h1v1h-1zM22 25h1v1h-1zM27 25h1v1h-1zM28 25h1v1h-1zM30 25h1v1h-1zM31 25h1v1h-1zM2 26h1v1h-1zM3 26h1v1h-1zM4 26h1v1h-1zM8 26h1v1h-1zM9 26h1v1h-1zM10 26h1v1h-1zM11 26h1v1h-1zM15 26h1v1h-1zM16 26h1v1h-1zM17 26h1v1h-1zM18 26h1v1h-1zM19 26h1v1h-1zM22 26h1v1h-1zM26 26h1v1h-1zM27 26h1v1h-1zM28 26h1v1h-1zM29 26h1v1h-1zM30 26h1v1h-1zM31 26h1v1h-1zM33 26h1v1h-1zM10 27h1v1h-1zM12 27h1v1h-1zM15 27h1v1h-1zM16 27h1v1h-1zM18 27h1v1h-1zM19 27h1v1h-1zM21 27h1v1h-1zM22 27h1v1h-1zM26 27h1v1h-1zM30 27h1v1h-1zM31 27h1v1h-1zM34 27h1v1h-1zM2 28h1v1h-1zM3 28h1v1h-1zM4 28h1v1h-1zM5 28h1v1h-1zM6 28h1v1h-1zM7 28h1v1h-1zM8 28h1v1h-1zM11 28h1v1h-1zM12 28h1v1h-1zM13 28h1v1h-1zM17 28h1v1h-1zM19 28h1v1h-1zM21 28h1v1h-1zM23 28h1v1h-1zM25 28h1v1h-1zM26 28h1v1h-1zM28 28h1v1h-1zM30 28h1v1h-1zM34 28h1v1h-1zM2 29h1v1h-1zM8 29h1v1h-1zM10 29h1v1h-1zM12 29h1v1h-1zM15 29h1v1h-1zM18 29h1v1h-1zM21 29h1v1h-1zM24 29h1v1h-1zM25 29h1v1h-1zM26 29h1v1h-1zM30 29h1v1h-1zM31 29h1v1h-1zM33 29h1v1h-1zM2 30h1v1h-1zM4 30h1v1h-1zM5 30h1v1h-1zM6 30h1v1h-1zM8 30h1v1h-1zM11 30h1v1h-1zM12 30h1v1h-1zM13 30h1v1h-1zM14 30h1v1h-1zM15 30h1v1h-1zM18 30h1v1h-1zM19 30h1v1h-1zM21 30h1v1h-1zM22 30h1v1h-1zM25 30h1v1h-1zM26 30h1v1h-1zM27 30h1v1h-1zM28 30h1v1h-1zM29 30h1v1h-1zM30 30h1v1h-1zM31 30h1v1h-1zM2 31h1v1h-1zM4 31h1v1h-1zM5 31h1v1h-1zM6 31h1v1h-1zM8 31h1v1h-1zM12 31h1v1h-1zM14 31h1v1h-1zM17 31h1v1h-1zM19 31h1v1h-1zM22 31h1v1h-1zM25 31h1v1h-1zM27 31h1v1h-1zM30 31h1v1h-1zM32 31h1v1h-1zM33 31h1v1h-1zM34 31h1v1h-1zM2 32h1v1h-1zM4 32h1v1h-1zM5 32h1v1h-1zM6 32h1v1h-1zM8 32h1v1h-1zM10 32h1v1h-1zM12 32h1v1h-1zM14 32h1v1h-1zM15 32h1v1h-1zM16 32h1v1h-1zM17 32h1v1h-1zM19 32h1v1h-1zM21 32h1v1h-1zM23 32h1v1h-1zM25 32h1v1h-1zM27 32h1v1h-1zM28 32h1v1h-1zM30 32h1v1h-1zM32 32h1v1h-1zM33 32h1v1h-1zM34 32h1v1h-1zM2 33h1v1h-1zM8 33h1v1h-1zM10 33h1v1h-1zM11 33h1v1h-1zM12 33h1v1h-1zM13 33h1v1h-1zM14 33h1v1h-1zM16 33h1v1h-1zM18 33h1v1h-1zM22 33h1v1h-1zM25 33h1v1h-1zM27 33h1v1h-1zM31 33h1v1h-1zM2 34h1v1h-1zM3 34h1v1h-1zM4 34h1v1h-1zM5 34h1v1h-1zM6 34h1v1h-1zM7 34h1v1h-1zM8 34h1v1h-1zM10 34h1v1h-1zM11 34h1v1h-1zM15 34h1v1h-1zM16 34h1v1h-1zM18 34h1v1h-1zM19 34h1v1h-1zM22 34h1v1h-1zM24 34h1v1h-1zM26 34h1v1h-1zM28 34h1v1h-1zM30 34h1v1h-1zM34 34h1v1h-1z" fill="#030913"/></svg></div><span>SCAN FOR CODE &amp; DATA</span></div>
+</div>
+<script>// © 2026 Eyitayo Alimi. All rights reserved.
+let seed = 20261026, agents = [], particles = [], filaments = [], eye;
+const palette = ['#26d8ff','#ff9b40','#42efbd','#a58bff'];
+let t = 0;
+function sc(){return constrain(Math.min(width/1000,height/700),.62,1.2);}
+function clearR(){return (80+5*35)/2*sc()+34;} // nothing is drawn inside this radius around the eye
+
+function setup(){
+  createCanvas(windowWidth,windowHeight);
+  pixelDensity(Math.min(2, window.devicePixelRatio || 1));
+  reseed();
+}
+function reseed(){
+  randomSeed(seed); noiseSeed(seed);
+  agents = [
+    {x:.28,y:.52,c:color(palette[0]),name:'A',model:'deepseek-chat',phase:0},
+    {x:.72,y:.52,c:color(palette[1]),name:'B',model:'gpt-4o-mini',phase:2.1},
+    {x:.50,y:.72,c:color(palette[2]),name:'C',model:'gpt-4o-mini',phase:4.2}
+  ];
+  eye={x:.5,y:(width<650?.27:.22)};
+  particles=[];
+  filaments=[];
+  const NP=Math.floor(constrain(width*height/700,700,1900));
+  for(let i=0;i<NP;i++){
+    let a=random(TWO_PI), r=random(.04,.48);
+    particles.push({x:width*(.5+cos(a)*r),y:height*(.48+sin(a)*r*.72),
+      vx:0,vy:0,life:random(100,600),h:random(1),size:random(.5,1.8)});
+  }
+  for(let i=0;i<(width<650?80:140);i++){
+    filaments.push({x:random(width*.18,width*.82),y:random(height*.30,height*.80),
+      angle:random(TWO_PI),len:random(50,210),seed:random(1000)});
+  }
+  background(3,9,19);
+}
+function windowResized(){resizeCanvas(windowWidth,windowHeight);reseed();}
+function hexToRgb(h){return color(h);}
+function draw(){
+  // translucent trail layer creates slow memory in the field
+  noStroke(); fill(3,9,19,22); rect(0,0,width,height);
+  t += .003;
+  let nodes=agents.map(a=>({x:a.x*width,y:a.y*height}));
+  let ex=eye.x*width, ey=eye.y*height;
+
+  // faint radial observation field
+  for(let r=0;r<10;r++){
+    noFill(); stroke(26,190,255,8-r*.55); strokeWeight(1);
+    ellipse(ex,ey,(80+r*35)*sc()+sin(t*2+r)*3,(80+r*35)*sc()+sin(t*2+r)*3);
+  }
+
+  // living network filaments bend around the observing field
+  for(let f of filaments){
+    let x=f.x, y=f.y, ang=f.angle;
+    let px=x, py=y;
+    noFill(); beginShape(); let open=false;
+    for(let k=0;k<42;k++){
+      let n=noise(x*.0025,y*.0025,f.seed+t*.2);
+      let target=atan2(ey-y,ex-x);
+      let pull=0.012/(1+dist(x,y,ex,ey)*.003);
+      ang += (n-.5)*.34 + sin(t*2+f.seed)*.003;
+      ang += atan2(sin(target-ang),cos(target-ang))*pull;
+      x += cos(ang)*2.5; y += sin(ang)*2.5;
+      let d=dist(x,y,mouseX,mouseY);
+      if(mouseIsPressed && d<100){x+=(x-mouseX)*.018;y+=(y-mouseY)*.018;}
+      if(dist(x,y,ex,ey)<clearR()){ if(open){endShape();beginShape();open=false;} continue; }
+      stroke(palette[Math.floor(f.seed)%3]); strokeWeight(.45);
+      strokeCap(ROUND); vertex(x,y); open=true;
+    }
+    endShape();
+  }
+
+  // cross-agent links: bright communication paths and broken surveillance paths
+  for(let i=0;i<3;i++){
+    for(let j=i+1;j<3;j++){
+      let a=nodes[i],b=nodes[j];
+      let bend=sin(t*1.4+i*2+j)*height*.055;
+      noFill(); strokeWeight(1.2);
+      stroke(35,215,255,75);
+      bezier(a.x,a.y,a.x+(b.x-a.x)*.3,a.y+bend,b.x-(b.x-a.x)*.3,b.y-bend,b.x,b.y);
+      drawingContext.setLineDash([3,8]);
+      stroke(220,245,255,75);
+      bezier(a.x,a.y,lerp(a.x,ex,.48),lerp(a.y,ey,.4),lerp(b.x,ex,.48),lerp(b.y,ey,.4),b.x,b.y);
+      drawingContext.setLineDash([]);
+      // geometric bid-signature arcs
+      for(let q=0;q<4;q++){
+        let u=(q+1)/5;
+        let x=lerp(a.x,b.x,u), y=lerp(a.y,b.y,u)+sin(t*2+q+i)*12;
+        noStroke(); fill(agents[i].c); circle(x,y,1.7);
+      }
+    }
+  }
+
+  // particles flow through a seeded noise field; pointer introduces local turbulence
+  blendMode(ADD);
+  for(let p of particles){
+    let n=noise(p.x*.0018,p.y*.0018,t+p.h*4);
+    let angle=n*TWO_PI*3.2;
+    let dx=mouseX-p.x,dy=mouseY-p.y, d=sqrt(dx*dx+dy*dy);
+    let disturbance=(d<160)?(1-d/160)*.12:0;
+    p.vx=p.vx*.94+cos(angle)*.14+dx*disturbance*.025;
+    p.vy=p.vy*.94+sin(angle)*.14+dy*disturbance*.025;
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0||p.x>width||p.y<0||p.y>height){p.x=random(width);p.y=random(height);p.vx=0;p.vy=0;}
+    let nearest=999, idx=0;
+    for(let i=0;i<nodes.length;i++){let dd=dist(p.x,p.y,nodes[i].x,nodes[i].y);if(dd<nearest){nearest=dd;idx=i;}}
+    let cc=agents[idx].c;
+    if(dist(p.x,p.y,ex,ey)>=clearR()){stroke(red(cc),green(cc),blue(cc),map(p.life%180,0,180,12,70));
+    strokeWeight(p.size); point(p.x,p.y);}
+    p.life--; if(p.life<0){p.x=random(width);p.y=random(height);p.life=random(100,600);}
+  }
+  blendMode(BLEND);
+
+  // eye is an observer, not an omniscient truth oracle
+  push(); translate(ex,ey); scale(sc());
+  noFill();
+  for(let r=0;r<3;r++){stroke(38,218,255,150-r*35);strokeWeight(1.4-r*.3);circle(0,0,70+r*13+sin(t*3+r)*2);}
+  // animated eye: fixed almond outline, wandering gaze that leans toward the pointer, breathing iris and glow
+  const wx=sin(t*2.3)*4+sin(t*5.1)*1.5, wy=cos(t*1.9)*2.2;
+  const gx=constrain((mouseX-ex)*.02,-6,6)+wx, gy=constrain((mouseY-ey)*.02,-3,3)+wy;
+  const br=sin(t*4)*1.2;
+  const ctx=drawingContext;
+  ctx.save(); ctx.beginPath(); ctx.moveTo(-29,0); ctx.bezierCurveTo(-12,-20,12,-20,29,0); ctx.bezierCurveTo(12,20,-12,20,-29,0); ctx.closePath(); ctx.clip();
+  noStroke(); fill(8,30,48); rect(-30,-24,60,48);
+  fill(35,216,255,40+sin(t*3)*14);circle(gx*.5,gy*.5,25+br*2);
+  fill(90,234,255);circle(gx,gy,12+br);
+  fill(1,11,24);circle(gx,gy,5+sin(t*2.6)*1.2);
+  fill(230,252,255,200);circle(gx-2,gy-2,2);
+  ctx.restore();
+  noFill(); stroke(215,250,255,235); strokeWeight(1.4);
+  beginShape(); vertex(-29,0); bezierVertex(-12,-20,12,-20,29,0); bezierVertex(12,20,-12,20,-29,0); endShape();
+  pop();
+  // monitors listed on an arc along the 5th ring of the observation field
+  (function(){
+    const k=sc(), R=((80+4*35)*k+sin(t*2+4)*3)/2, rt=R+12, str='MONITORS · gpt-4o · deepseek · Qwen2.5-32B', tr=1.6;
+    push(); textSize(Math.max(8,10*k)); textStyle(NORMAL); textAlign(CENTER,BASELINE);
+    const ws=[...str].map(ch=>textWidth(ch)+tr), total=ws.reduce((a,b)=>a+b,0);
+    const start=-HALF_PI-total/(2*rt);
+    noFill(); stroke(57,227,255,200); strokeWeight(1.6); arc(ex,ey,R*2,R*2,start-.06,start+total/rt+.06);
+    noStroke(); fill('#a9d3e0');
+    let cum=0;
+    [...str].forEach((ch,i)=>{ const a=start+(cum+ws[i]/2)/rt; push(); translate(ex+cos(a)*rt,ey+sin(a)*rt); rotate(a+HALF_PI); text(ch,0,0); pop(); cum+=ws[i]; });
+    pop();
+  })();
+
+  // agents breathe; not literal robot icons, but orbital attractors
+  for(let i=0;i<agents.length;i++){
+    let a=agents[i], x=a.x*width,y=a.y*height;
+    push(); translate(x,y); scale(Math.max(.7,sc())); x=0; y=0;
+    let pulse=sin(t*3+a.phase)*3;
+    for(let r=0;r<4;r++){
+      noFill();stroke(red(a.c),green(a.c),blue(a.c),70-r*14);
+      strokeWeight(1);circle(x,y,45+r*13+pulse);
+    }
+    noStroke();fill(5,22,38,240);circle(x,y,47);
+    stroke(a.c);strokeWeight(1.6);noFill();circle(x,y,43);
+    // central core with orbiting bid points
+    noStroke();fill(a.c);circle(x,y,5);
+    for(let k=0;k<6;k++){
+      let ang=t*(.35+i*.08)+k*TWO_PI/6+a.phase;
+      let rr=15+sin(t*2+k)*2;
+      fill(a.c);circle(x+cos(ang)*rr,y+sin(ang)*rr,2.5);
+    }
+    noStroke();fill('#eafaff');textAlign(CENTER);textStyle(BOLD);textSize(14);text(a.name,x,y+67);
+    fill('#91b8d7');textStyle(NORMAL);textSize(9);text(a.model,x,y+81);
+    pop();
+  }
+}
+function mousePressed(){seed=floor(random(1,999999));reseed();}
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('dragstart',function(e){e.preventDefault();});
+</script>
+</body>
+</html>
